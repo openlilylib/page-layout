@@ -28,12 +28,6 @@
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-% This functionality relies on the edition-engraver
-% which is temporarily included from the openlilylib/snippets repository
-% (which has to be in LilyPond's include path)
-\include "editorial-tools/edition-engraver/definitions.ily"
 \addEdition conditional-breaks
 
 % Configure which breaks to use.
@@ -44,7 +38,7 @@
 % or a single symbol or string with either entry or "all"
 % Each element that is present will be respected.
 % By default all breaks are used
-% For their interaction of the options please refer to the comments to 
+% For their interaction of the options please refer to the comments to
 % and in \applyConditionalBreaks.
 \registerOption page-layout.conditional-breaks.use all
 
@@ -74,7 +68,7 @@ applyConditionalBreaks =
               (if (member 'all use-list)
                   '(line-breaks page-breaks page-turns)
                   use-list)))
-           
+
            ;; Load a set of break positions.
            (break-set `(breaks break-sets ,set))
            (conditionalLineBreaks (getChildOption break-set 'line-breaks))
@@ -87,7 +81,7 @@ applyConditionalBreaks =
            (keep-page-turns (member 'page-turns breaks-to-use))
 
            ;; process possible combinations of options
-           
+
            ;; page breaks and page turns are only used when set through option
            (pagebreaks (if keep-page-breaks
                          conditionalPageBreaks
@@ -107,18 +101,10 @@ applyConditionalBreaks =
 
      ;; apply the determined breaks as edition-engraver commands
      #{
-       \editionModList conditional-breaks conditional-breaks.Score.A
+       \editionModList conditional-breaks breaks.Score.A
        \break #linebreaks
-       \editionModList conditional-breaks conditional-breaks.Score.A
+       \editionModList conditional-breaks breaks.Score.A
        \pageBreak #pagebreaks
-       \editionModList conditional-breaks conditional-breaks.Score.A
+       \editionModList conditional-breaks breaks.Score.A
        \pageTurn #pageturns
      #}))
-
-% "Install" the edition-engraver in the score
-\layout {
-  \context {
-    \Score
-    \consists \editionEngraver conditional-breaks
-  }
-}
