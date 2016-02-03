@@ -37,15 +37,16 @@
 \addEdition conditional-breaks
 
 % Configure which breaks to use.
-% The option expects a symbol-list containing any combination of
+% The option expects either a symbol-list containing any combination of
 % - 'line-breaks
 % - 'page-breaks
 % - 'page-turns
+% or a single symbol or string with either entry or "all"
 % Each element that is present will be respected.
-% By default line-breaks are used, page breaks and page turns ignored
-% For their interaction please refer to the comments to and in
-% \applyConditionalBreaks.
-\registerOption page-layout.conditional-breaks.use #'(line-breaks)
+% By default all breaks are used
+% For their interaction of the options please refer to the comments to 
+% and in \applyConditionalBreaks.
+\registerOption page-layout.conditional-breaks.use all
 
 % Calling of this function is necessary to actually process the conditional breaks.
 % Place it after all break lists have been set.
@@ -58,51 +59,51 @@ applyConditionalBreaks =
            ;; However, if line breaks are enabled, page breaks and page turns
            ;; are inserted as line breaks.
            ;; Any combination should produce the expected results.
-           (base-path '(page-layout conditional-breaks use))
-           (breaks-to-use (getOption base-path))
-           (keep-conditional-line-breaks (member 'line-breaks breaks-to-use))
-           (keep-conditional-page-breaks (member 'page-breaks breaks-to-use))
-           (keep-conditional-page-turns (member 'page-turns breaks-to-use))
-
+           (breaks-to-use
+            ;; This rather complicated assignment is necessary to
+            ;; - allow symbol-list or symbol or string as the option value
+            ;; - allow the use of 'all as option
+            (let* ((use (getOption '(page-layout conditional-breaks use)))
+                   ;; ensure a symbol-list
+                   (use-list (if (list? use)
+                                 use
+                                 (list
+                                  (if (string? use)
+                                      (string->symbol use)
+                                      use)))))
+              (if (member 'all use-list)
+                  '(line-breaks page-breaks page-turns)
+                  use-list)))
+           
            ;; Load a set of break positions.
            (break-set `(breaks break-sets ,set))
            (conditionalLineBreaks (getChildOption break-set 'line-breaks))
            (conditionalPageBreaks (getChildOption break-set 'page-breaks))
            (conditionalPageTurns (getChildOption break-set 'page-turns))
 
+           ;; Which break types to be kept?
+           (keep-line-breaks (member 'line-breaks breaks-to-use))
+           (keep-page-breaks (member 'page-breaks breaks-to-use))
+           (keep-page-turns (member 'page-turns breaks-to-use))
+
            ;; process possible combinations of options
-           (lbreaks (if keep-conditional-line-breaks
-                        ;; if line breaks are used we compose a list from
-                        ;; the original line breaks and the page breaks/turns
-                        ;; if these aren't kept separately
-                        (append
-                         conditionalLineBreaks
-                         (if (not keep-conditional-page-breaks)
-                             conditionalPageBreaks
-                             '())
-                         (if (not keep-conditional-page-turns)
-                             conditionalPageTurns
-                             '()))
-                        ;; if line breaks are discarded they are so completely
-                        '()))
-           (lpbreaks (if keep-conditional-page-breaks
+           
+           ;; page breaks and page turns are only used when set through option
+           (pagebreaks (if keep-page-breaks
                          conditionalPageBreaks
                          '()))
-           (lpturns (if keep-conditional-page-turns
+           (pageturns (if keep-page-turns
                         conditionalPageTurns
                         '()))
-           (linebreaks (if keep-conditional-line-breaks
-                           (append lbreaks lpbreaks lpturns)
-                           lbreaks))
-
-           ;; if we do not respect page breaks we use an empty list
-           (pagebreaks (if keep-conditional-page-breaks
-                           lpbreaks
-                           '()))
-           ;; if we do not respect page turns we use an empty list
-           (pageturns (if keep-conditional-page-turns
-                          lpturns
-                          '())))
+           ;; if line breaks are not used *no* line breaks are issued at all.
+           ;; if line breaks are used then unused page breaks or page turns
+           ;; are converted to line breaks (if I don't set the use of page breaks
+           ;; I still want to render them as line breaks)
+           (linebreaks (if keep-line-breaks
+                           (append conditionalLineBreaks
+                             (if keep-page-breaks '() conditionalPageBreaks)
+                             (if keep-page-turns '() conditionalPageTurns))
+                           '())))
 
      ;; apply the determined breaks as edition-engraver commands
      #{
