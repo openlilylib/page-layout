@@ -97,10 +97,16 @@ applyConditionalBreaks =
                            (append conditionalLineBreaks
                              (if keep-page-breaks '() conditionalPageBreaks)
                              (if keep-page-turns '() conditionalPageTurns))
-                           '())))
+                           '()))
+           ;; retrieve all line breaks that are not at barlines
+           (in-measure-breaks
+            (filter list? (append linebreaks pagebreaks pageturns))))
 
      ;; apply the determined breaks as edition-engraver commands
      #{
+       % insert invisible barlines to enable breaks within measures
+       \editionModList conditional-breaks breaks.Score.A
+       \bar "" #in-measure-breaks
        \editionModList conditional-breaks breaks.Score.A
        \break #linebreaks
        \editionModList conditional-breaks breaks.Score.A
