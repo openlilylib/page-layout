@@ -30,7 +30,7 @@
 
 
 % TODO: This may be changed to use lyp
-\include "oll-core.ily"
+\include "oll-core/package.ily"
 
 \registerPackage page-layout
 \registerModules page-layout conditional-breaks
