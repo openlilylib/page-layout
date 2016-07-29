@@ -42,6 +42,11 @@
 % and in \applyConditionalBreaks.
 \registerOption page-layout.conditional-breaks.use all
 
+% By default \applyConditionalBreaks prohibits automatic breaks.
+% In order to allow them (for example to use the functionality to
+% simply force *some* breaks) set this option to ##t
+\registerOption page-layout.conditional-breaks.allow-auto ##f
+
 % Calling of this function is necessary to actually process the conditional breaks.
 % Place it after all break lists have been set.
 % - set: the named set as a Scheme symbol, e.g. \applyConditionalBreaks #'original-edition
@@ -104,6 +109,10 @@ applyConditionalBreaks =
 
      ;; apply the determined breaks as edition-engraver commands
      #{
+       % Prevent automatic breaks between the explicitly defined ones.
+       \editionMod conditional-breaks 1 0/4 breaks.Score.A
+       \override Score.NonMusicalPaperColumn.line-break-permission =
+       \getOption page-layout.conditional-breaks.allow-auto
        % insert invisible barlines to enable breaks within measures
        \editionModList conditional-breaks breaks.Score.A
        \bar "" #in-measure-breaks
