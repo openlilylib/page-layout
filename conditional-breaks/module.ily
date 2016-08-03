@@ -105,7 +105,7 @@ applyConditionalBreaks =
                            '()))
            ;; retrieve all line breaks that are not at barlines
            (in-measure-breaks
-            (filter list? (append linebreaks pagebreaks pageturns))))
+            (filter pair? (append linebreaks pagebreaks pageturns))))
 
      ;; apply the determined breaks as edition-engraver commands
      #{
