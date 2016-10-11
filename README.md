@@ -25,8 +25,8 @@ any way.
 \setBreaks original-edition page-turns #'(15)
 
 \registerBreakSet manuscript
-\setBreaks original-edition line-breaks #'(5 10 17 24)
-\setBreaks original-edition page-breaks #'(13)
+\setBreaks manuscript  line-breaks #'(5 10 17 24)
+\setBreaks manuscript  page-breaks #'(13)
 
 % Configure which breaks to respect
 \setOption page-layout.conditional-breaks.use #'(line-breaks page-breaks)
