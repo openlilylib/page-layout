@@ -1,0 +1,22 @@
+#
+# openLilyLib/page-layout configuration
+#
+
+name: page-layout
+display-name: Page Layout
+short-description: Managing page layout in LilyPond scores
+description: <
+  The page-layout package provides tools to easily define and apply
+  sets of line breaks.
+  >
+dependencies: [
+  edition-engraver
+  breaks
+]
+oll-core: 0.0.0
+maintainers: [
+  Urs Liska <ul@openlilylib.org>
+  ]
+version: 0.0.1
+license: GPL3
+repository:  https://github.com/openlilylib/ji/
