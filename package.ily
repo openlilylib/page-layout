@@ -32,13 +32,13 @@
 % TODO: This may be changed to use lyp
 \include "oll-core/package.ily"
 
-\registerPackage page-layout \with { 
+\registerPackage page-layout \with {
   maintainers = "Urs Liska <ul@openlilylib.org>"
   version = "0.9.0"
   short-description = "Conveniently control line and page breaking"
   description = ""
 }
-\registerModule page-layout.conditional-breaks 
+\registerModule page-layout.conditional-breaks
 
 % require breaks functionality
 % TODO: Change to lyp
