@@ -28,7 +28,5 @@
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% TODO: This may be changed to use lyp
-\include "oll-core/package.ily"
-
+% Implicitly load the breaks package
 \loadPackage breaks
