@@ -47,12 +47,19 @@
 % simply force *some* breaks) set this option to ##t
 \registerOption page-layout.conditional-breaks.allow-auto ##f
 
+\registerOption page-layout.conditional-breaks.score-id ##f
+
 % Calling of this function is necessary to actually process the conditional breaks.
 % Place it after all break lists have been set.
 % - set: the named set as a Scheme symbol, e.g. \applyConditionalBreaks #'original-edition
 applyConditionalBreaks =
 #(define-void-function (set) (symbol?)
    (let* (
+           (target
+            (append
+              (or (getOption '(page-layout conditional-breaks score-id))
+                  '(breaks))
+             '(Score A)))
            ;; configure which types of breaks are kept.
            ;; If page breaks or page turns are disabled they are not inserted.
            ;; However, if line breaks are enabled, page breaks and page turns
@@ -110,16 +117,16 @@ applyConditionalBreaks =
      ;; apply the determined breaks as edition-engraver commands
      #{
        % Prevent automatic breaks between the explicitly defined ones.
-       \editionMod conditional-breaks 1 0/4 breaks.Score.A
+       \editionMod conditional-breaks 1 0/4 #target
        \override Score.NonMusicalPaperColumn.line-break-permission =
        \getOption page-layout.conditional-breaks.allow-auto
        % insert invisible barlines to enable breaks within measures
-       \editionModList conditional-breaks breaks.Score.A
+       \editionModList conditional-breaks #target
        \bar "" #in-measure-breaks
-       \editionModList conditional-breaks breaks.Score.A
+       \editionModList conditional-breaks #target
        \break #linebreaks
-       \editionModList conditional-breaks breaks.Score.A
+       \editionModList conditional-breaks #target
        \pageBreak #pagebreaks
-       \editionModList conditional-breaks breaks.Score.A
+       \editionModList conditional-breaks #target
        \pageTurn #pageturns
      #}))
